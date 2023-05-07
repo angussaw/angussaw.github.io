@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+<!--
+	Read Only by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Read Only by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+		<section id="header">
+			<header>
+				<span class="image avatar"><img src="../../images/avatar.jpg" alt="" /></span>
+				<h4 id="home"><a href="../../index.html">Home</a></h4>
+
+			</header>
+			<nav id="nav">
+				<ul>
+					<li><a href="#introduction" class="active">Introduction</a></li>
+					<li><a href="#data">Data</a></li>
+					<li><a href="#model_architecture">Model Architecture</a></li>
+					<li><a href="#baseline_model">Baseline Model</a></li>
+					<li><a href="#fine_tuned_model">Fine Tuned Model</a></li>
+					<li><a href="#deployment">Deployment</a></li>
+					<li><a href="#conclusion">Conclusion</a></li>
+					<li><a href="#tools">Tools</a></li>
+
+				</ul>
+			</nav>
+			<footer>
+				<ul class="icons">
+					<li><a href="https://www.linkedin.com/in/angussaw/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+				</ul>
+			</footer>
+		</section>
+
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+
+					<!-- One -->
+						<section id="introduction">
+							<div class="image main" data-position="center">
+								<img src="images/stock_img.jpg" alt="" />
+							</div>
+							<div class="container">
+								<header class="major">
+									<h3>Explainable-Neural-Networks for pneumonia detection using Gradient-weighted Class Activation Mapping (Grad-CAM)</h3>
+									<p>Try it on <a href="https://angussaw-xnn-streamlit-test-streamlit-web-wuuc0h.streamlit.app/">Streamlit</a>!</p>
+								</header>
+								<h4>Introduction</h4>
+
+								<p>Bacterial and viral pathogens are the two leading causes of pneumonia but require very different forms of management. Bacterial pneumonia requires urgent referral for immediate antibiotic treatment, while viral pneumonia is treated with supportive care. Therefore, accurate and timely diagnosis is imperative.
+									One key element of diagnosis is radiographic data, since chest X-rays are routinely obtained as standard of care and can help differentiate between different types of pneumonia</p>
+
+								<p>The objective of this project is to develop a transfer learning framework in classifying pediatric chest X-rays to detect pneumonia and furthermore to distinguish viral and bacterial pneumonia to facilitate rapid referrals for children needing urgent intervention.</p>
+
+								<p>To understand the classifications made by the deep learning model and enhance explainability of its black box nature, the visual explaination algorithm Gradient-weighted Class Activation Mapping (Grad-CAM) generates heatmaps that are superimposed on the test images to provide visual explainability on the model. The heatmap highlights the important regions in the X-ray image for predicting the classes.</p>
+
+								<p>The Grad-CAM technique utilizes the gradients of the classification score with respect to the final convolutional feature map, to identify the parts of an input image that most impact the classification score. The places where this gradient is large are exactly the places where the final score depends most on the data.</p>
+							</div>
+						</section>
+
+						<section id="data">
+							<div class="container">
+								<h4>Data</h4>
+								<h5>Number of classes in train and test set</h5>
+								<table>
+									<tr>
+									  <th>dataset</th>
+									  <th>train</th>
+									  <th>test</th>
+									</tr>
+									<tr>
+									  <td>number_of_bacteria</td>
+									  <td>2534</td>
+									  <td>242</td>
+									</tr>
+									<tr>
+									  <td>number_of_normal</td>
+									  <td>1341</td>
+									  <td>234</td>
+									</tr>
+									<tr>
+										<td>number_of_virus</td>
+										<td>1341</td>
+										<td>148</td>
+									  </tr>
+								  </table> 
+								<p>There are a total of 5216 and 624 images in the train and test set respectively. The train set is further split to obtain a validation set for model training. Below are sample images for each of the classes:</p>
+								<a class="image"><img src="images/samples.png" width="800" height="300"/></a>
+								<p>The normal chest X-ray (middle panel) depicts clear lungs without any areas of abnormal opacification in the image. Bacterial pneumonia (left) typically exhibits a focal lobar consolidation, whereas viral pneumonia (right) manifests with a more diffuse ‘‘interstitial’’ pattern in both lungs.</p>
+							</div>
+						</section>	
+
+						<section id="model_architecture">
+							<div class="container">
+								<h4>Model</h4>
+								<p>A transfer learining framework is used to construct the model. The model utilizes the pre-trained weights from MobileNetV2 as a starting point. The layers in the base model is frozen to be used as a feature extractor.</p>
+								<p>The architecture of the model consists of:</p>
+								<ul>
+									<li>Input layer</li>
+									<li>RandomFlip and Random Rotation layers for data augmentation (Note: Data augmentation is inactive at test time)</li>
+									<li>Rescaling layer for standardization</li>
+									<li>MobileNetV2 layers previously trained on the 'imagenet' dataset. (Layers are frozen for transfer learning)</li>
+									<li>Global max pooling layer</li>
+									<li>Dropout layer</li>
+									<li>Number of dense layers with ReLu activation function</li>
+									<li>Output layer of 3 classes with softmax activation</li>
+								</ul> 
+							<!-- <a class="image"><img src="images/mobilenetv2.png" width="750" height="300"/></a> -->
+
+							</div>
+						</section>	
+
+						<section id="baseline_model">
+							<div class="container">
+								<h4>Evaluation of baseline model</h4>
+								<p></p>
+								<h5>Baseline model training parameters</h5>
+								<table style="width: 50%">
+									<tr>
+									  <th>Parameter</th>
+									  <th>Value</th>
+									</tr>
+									<tr>
+									  <td>Batch size</td>
+									  <td>100</td>
+									</tr>
+									<tr>
+									  <td>Dropout</td>
+									  <td>0.2</td>
+									</tr>
+									<tr>
+										<td>Loss function</td>
+										<td>categorical crossentropy</td>
+									</tr>
+									<tr>
+										<td>Epochs</td>
+										<td>50</td>
+									</tr>
+									<tr>
+										<td>Optimizer</td>
+										<td>adam</td>
+									</tr>
+									<tr>
+										<td>Learning rate</td>
+										<td>0.001</td>
+									</tr>																		
+								</table> 
+								<p></p>
+
+								<h5>Confusion Matrix of test data</h5>
+								<a class="image"><img src="images/baseline/Confusion_Matrix (test data).png" width="450" height="350"/></a>
+								<p></p>
+
+								<h5>Test data metrics for each class</h5>
+								<a class="image"><img src="images/baseline/Test metrics for each class.png" width="750" height="400"/></a>
+								<p></p>
+
+								<table style="width: 100%">
+									<tr>
+									  <th>Metric</th>
+									  <th>Bacteria</th>
+									  <th>Normal</th>
+									  <th>Virus</th>
+									  <th>Overall</th>
+									</tr>
+									<tr>
+									  <td>Accuracy</td>
+									  <td>86.4%</td>
+									  <td>88.5%</td>
+									  <td>86.1%</td>
+									  <td>80.4%</td>
+
+									</tr>
+									<tr>
+										<td>Precision</td>
+										<td>77.5%</td>
+										<td>86.8%</td>
+										<td>75.6%</td>
+										<td>80.6%</td>
+  
+									</tr>
+									<tr>
+										<td>Recall</td>
+										<td>91.3%</td>
+										<td>81.6%</td>
+										<td>60.8%</td>
+										<td>80.4%</td>
+  
+									</tr>																		
+								</table> 
+								<p></p>
+
+								<h5>What the model did well</h5>
+								<p>The model was able to classify most of the "BACTERIA" images correctly, achieving a recall of 91.3%.</p>
+								<p>The model is very precise in its classification of "NORMAL" images. For the images that were correctly predicted to be the "NORMAL" class, the final convolution layer of the model mostly focused on parts of the X-ray that weren't on the lungs, instead primarily focusing on the mid-center section where the neck is located at.</p>
+								<h6>Sample Grad-CAM visualizations on test data (NORMAL-True Positives)</h6>
+								<a class="image"><img src="images/baseline/Sample Grad-CAM visualizations on test data (NORMAL-True Positives).png" width="550" height="500"/></a>
+								<p></p>
+
+								<h5>What the model didn't do well</h5>
+								<p>The model incorrectly classified alot of "VIRUS" images as "BACTERIA", indicating that it was unable to differentiate "VIRUS" images from "BACTERIA" images. The section that the model's final convolutional layer focused on was inconsistent and random, being unable to focus on the diffuse interstitial pattern found in both lungs.</p>
+								<h6>Sample Grad-CAM visualizations on test data (VIRUS-False Negatives)</h6>
+								<a class="image"><img src="images/baseline/Sample Grad-CAM visualizations on test data (VIRUS-False Negatives).png" width="550" height="500"/></a>
+								<p></p>
+
+							</div>
+						</section>	
+
+						<section id="fine_tuned_model">
+							<div class="container">
+								<h4>Evaluation of fine-tuned model</h4>
+								<p>The baseline model was then fine-tuned by unfreezing the top layers of the MobileNetV2 base model (from layer 145 onwards), and reducing the learning rate by 100 times to not destroy the weights that was trained in the baseline model.</p>
+								<h5>Fine-tuned model training parameters</h5>
+								<table style="width: 50%">
+									<tr>
+									  <th>Parameter</th>
+									  <th>Value</th>
+									</tr>
+									<tr>
+									  <td>Batch size</td>
+									  <td>300</td>
+									</tr>
+									<tr>
+									  <td>Dropout</td>
+									  <td>0.2</td>
+									</tr>
+									<tr>
+										<td>Loss function</td>
+										<td>categorical crossentropy</td>
+									</tr>
+									<tr>
+										<td>Epochs</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td>Optimizer</td>
+										<td>adam</td>
+									</tr>
+									<tr>
+										<td>Learning rate</td>
+										<td>0.00001</td>
+									</tr>	
+									<tr>
+										<td>From layer</td>
+										<td>145</td>
+									</tr>																	
+								</table> 
+								<p></p>
+
+								<h5>Confusion Matrix of test data</h5>
+								<a class="image"><img src="images/fine_tuned/Confusion_Matrix (test data).png" width="450" height="350"/></a>
+								<p></p>
+
+								<h5>Test data metrics for each class</h5>
+								<a class="image"><img src="images/fine_tuned/Test metrics for each class.png" width="750" height="400"/></a>
+								<p></p>
+
+								<table style="width: 100%">
+									<tr>
+									  <th>Metric</th>
+									  <th>Bacteria</th>
+									  <th>Normal</th>
+									  <th>Virus</th>
+									  <th>Overall</th>
+									</tr>
+									<tr>
+									  <td>Accuracy</td>
+									  <td>87.8%</td>
+									  <td>89.9%</td>
+									  <td>88.3%</td>
+									  <td>83.0%</td>
+
+									</tr>
+									<tr>
+										<td>Precision</td>
+										<td>81.9%</td>
+										<td>85.8%</td>
+										<td>80.0%</td>
+										<td>82.9%</td>
+  
+									</tr>
+									<tr>
+										<td>Recall</td>
+										<td>88.0%</td>
+										<td>87.6%</td>
+										<td>67.6%</td>
+										<td>83.0%</td>
+  
+									</tr>																		
+								</table> 
+								<p></p>
+
+								<h5>What the model improved on</h5>
+								<p>The fine tuned model improved slightly in its ability to differentiate "VIRUS" images from "BACTERIA" images..</p>
+								<table style="width: 100%">
+									<tr>
+									  <th>Metric</th>
+									  <th>Baseline</th>
+									  <th>Fine-tuned</th>
+									</tr>
+									<tr>
+									  <td>Accuracy</td>
+									  <td>86.1%</td>
+									  <td>88.3%</td>
+									</tr>
+									<tr>
+										<td>Precision</td>
+										<td>75.6%</td>
+										<td>80.0%</td>
+									</tr>
+									<tr>
+										<td>Recall</td>
+										<td>60.8%</td>
+										<td>67.6%</td>
+									</tr>																		
+								</table> 
+								
+								<p>For true positves of the "VIRUS" class, the model's final convolutional layer was more consistent in focusing on the interstitial pattern in the lungs</p>
+								<h6>Sample Grad-CAM visualizations on test data (VIRUS-True Positives)</h6>
+								<a class="image"><img src="images/fine_tuned/Sample Grad-CAM visualizations on test data (VIRUS-True Positives).png" width="550" height="500"/></a>
+								<p></p>
+
+							</div>
+						</section>
+
+						<section id="deployment">
+							<div class="container">
+								<h4>Deployment of model on Streamlit</h4>
+								<p>The fine-tuned model is deployed on streamlit for inference. In addition to predicting the class that the X-ray image falls under, Grad-CAM heatmaps of the last n convolutional layers are also generated to visualize which part of the X-ray image is the model focusing on to make the prediction.</p>
+
+								
+								<a class="image"><img src="images/streamlit/streamlit2.png" width="400" height="200"/></a>
+								<p></p>
+
+								<a class="image"><img src="images/streamlit/streamlit.png" width="400" height="350"/></a>
+								<p></p>
+
+							</div>
+						</section>
+
+						<section id="conclusion">
+							<div class="container">
+								<h4>Conclusion</h4>
+								
+								<p>By utilizing a transfer learning framework for feature extraction, the baseline deep learning model was mostly able to correctly classify lung X-ray images as "BACTERIA" and "NORMAL". However, the model was unable to differentiate "VIRUS" images from "BACTERIA" images, resulting in alot of "VIRUS" images incorrectly classified as "BACTERIA".</p>
+
+								<p>Upon further fine-tuning the top layers of the base model, the model has slightly improved in its ability to classify lung X-ray images as "VIRUS", resulting in better differentiation between the classes.</p>
+
+								<p>To observe a much better performance in classifying X-ray images as "VIRUS", more "VIRUS" labelled images can be collected for training.</p>
+
+								<p>The incorporation of the Grad-CAM algorithm in the evaluation of the predictions has provided much needed explainability as to which parts of the X-ray image impacts the classification score the most. Model explainability complementing with medical domain knowledge is cruicial in ensuring that an accurate diagnosis is performed on each X-ray image and differentiate between different types of pneumonia.</p>
+
+								<p>Model explainability is also essential in performing error analysis. It enables drilling down on false outcomes of a specific class (eg False Negatives for "VIRUS") to visualize what is the model focusing on that is causing these false outcomes (eg. focusing on the arms instead of the lungs, unclear interstitial patterns in lungs).</p>
+
+							</div>
+						</section>
+
+						<section id="tools">
+							<div class="container">
+								<h4>Tools</h4>
+								
+								<ul>
+									<li>Pandas</li>
+									<li>Matplotlib</li>
+									<li>Tensorflow</li>
+									<li>Keras</li>
+									<li>Mlflow</li>
+									<li>Docker</li>
+									<li>Streamlit</li>
+								</ul> 
+
+							</div>
+						</section>
+
+					</div>
+
+					<!-- Footer -->
+						<section id="footer">
+							<div class="container">
+								<ul class="copyright">
+									<li>&copy; Untitled. All rights reserved.</li><li></li>
+								</ul>
+							</div>
+						</section>
+	
+				</div>
+
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>
