@@ -149,22 +149,22 @@
                                         <td>Object (string)</td>
                                         <td>No</td>
                                         <td>- too many unique values, likely not useful in predicting target variable</td>
-                                      </tr>
-                                      <tr>
+                                    </tr>
+                                    <tr>
                                         <td>5</td>
                                         <td>Street Name</td>
                                         <td>Object (string)</td>
                                         <td>No</td>
                                         <td>- too many unique values, likely not useful in predicting target variable</td>
-                                      </tr>
-                                      <tr>
+                                    </tr>
+                                    <tr>
                                         <td>6</td>
                                         <td>Flat Model</td>
                                         <td>Object (string)</td>
                                         <td>No</td>
                                         <td> <p>- majority flat type is "Model A" + significant relationship with target (one-way ANOVA)</p>
-                                             <p>- High cardinality (20 unique values) Will need to consolidate common flat models together to reduce cardinality</p></td>
-                                             <p>- can consider dropping samples with "3Gen" (only 11 samples)</p>
+                                             <p>- High cardinality (20 unique values) Will need to consolidate common flat models together to reduce cardinality</p>
+                                             <p>- can consider dropping samples with "3Gen" (only 11 samples)</p></td>
                                     </tr>
                                     <tr>
                                         <td>7</td>
@@ -448,7 +448,7 @@
 								<p>SHAP values were calculated using the training set feature values, and were used to generate a summary plot to visualize 
                                     which features have the greatest contribution to the final model prediction</p>
                                 
-                                <a class="image"><img src="images/xgboost_plots.png" width="800" height="300"/></a>
+                                <a class="image"><img src="images/xgboost_plots.png" width="800" height="350"/></a>
 
                                 <p>Based on the summary plot for the XGBoost model, the top 6 features that have the highest SHAP values across all samples 
                                     are "floor_area_sqm", "lease_age", "region_Central", "distance_to_nearest_MRT_stations" and "storey_range".</p>
