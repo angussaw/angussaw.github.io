@@ -89,9 +89,9 @@
                                 </ul>
 
                                 <p>The HDB resale price data was downloaded from Data.gov.sg, 
-                                    containing approximately 120,000 resale transactions from 2015 to 2020. </p>
+                                    containing approximately 192,000 resale transactions from January 2015 to June 2023. </p>
 
-                                <p>There are a total of 117,527 rows and 11 columns in the dataset. Each row represents a hdb resale transaction, 
+                                <p>There are a total of 192,489 rows and 11 columns in the dataset. Each row represents a hdb resale transaction, 
                                     and the target variable is the "resale_price" variable. The EDA selection consists of the following main tasks: 
                                 </p>
                                 <ol type="1">
@@ -164,6 +164,7 @@
                                         <td>No</td>
                                         <td> <p>- majority flat type is "Model A" + significant relationship with target (one-way ANOVA)</p>
                                              <p>- High cardinality (20 unique values) Will need to consolidate common flat models together to reduce cardinality</p></td>
+                                             <p>- can consider dropping samples with "3Gen" (only 11 samples)</p>
                                     </tr>
                                     <tr>
                                         <td>7</td>
@@ -223,7 +224,7 @@
                                         <td>Float</td>
                                         <td>No</td>
                                         <td> <p>- slight positive (+) correlation with the resale value of the flat</p>
-                                             <p>- mean distance to the nearest school is about 300m</p></td>
+                                             <p>- mean distance to the nearest school is about 334m</p></td>
                                     </tr>
                                     <tr>
                                         <td>3</td>
@@ -239,7 +240,7 @@
                                         <td>Float</td>
                                         <td>No</td>
                                         <td> <p>- slight negative (-) correlation with the resale value of the flat</p>
-                                             <p>- mean distance to the nearest mrt station is about 855m</p></td>
+                                             <p>- mean distance to the nearest mrt station is about 851m</p></td>
                                     </tr>
                                     <tr>
                                         <td>5</td>
@@ -255,7 +256,7 @@
                                         <td>Float</td>
                                         <td>No</td>
                                         <td> <p>- slight negative (-) correlation with the resale value of the flat</p>
-                                             <p>- mean distance to the nearest mall is about 665m</p></td>
+                                             <p>- mean distance to the nearest mall is about 668m</p></td>
                                     </tr>
                                     <tr>
                                         <td>7</td>
@@ -361,12 +362,12 @@
                                         <td>Random Forest</td>
                                         <td>69247.1</td>
                                         <td>68800.6</td>
-                                        <td>13282.7</td>
-                                        <td>26525.8</td>
+                                        <td>15128.1</td>
+                                        <td>29324.4</td>
                                         <td>0.771</td>
                                         <td>0.77</td>
-                                        <td>0.992</td>
-                                        <td>0.966</td>
+                                        <td>0.991</td>
+                                        <td>0.967</td>
                                         <td><p>max_depth:20, 
                                             min_samples_leaf:1, 
                                             n_estimators:205</p></td>
@@ -392,31 +393,31 @@
                                     </tr>
                                     <tr>
                                         <td>XGBoost</td>
-                                        <td>25637.9</td>
-                                        <td>29166.1</td>
-                                        <td>16657.6</td>
-                                        <td>25119.7</td>
-                                        <td>0.969</td>
-                                        <td>0.959</td>
-                                        <td>0.987</td>
-                                        <td>0.969</td>
-                                        <td><p>max_depth:8, 
+                                        <td>28757.7</td>
+                                        <td>31126.2</td>
+                                        <td>14394.9</td>
+                                        <td>25792.9</td>
+                                        <td>0.968</td>
+                                        <td>0.963</td>
+                                        <td>0.992</td>
+                                        <td>0.975</td>
+                                        <td><p>max_depth:10, 
                                             learning_rate:0.1, 
-                                            n_estimators:480</p></td>
+                                            n_estimators:470</p></td>
                                     </tr>
                                 </table>
 
-                                <p>For the baseline models, XGBoost has the lowest validation root mean squared error of 29116, 
-                                    and the highest validation R squared score of 0.959. There is not much overfitting on the training set, 
+                                <p>For the baseline models, XGBoost has the lowest validation root mean squared error of 31126, 
+                                    and the highest validation R squared score of 0.963. There is not much overfitting on the training set, 
                                     as observed by the minor differences between the train and validation scores. </p>
 
                                 <p>After fine tuning the hyperparameters to minimize the validation root mean squared error using the Optuna's TPE sampler, 
-                                    the XGBoost model's validation root mean squared error and R squared score decreased and increased to 25119 and 0.969 
+                                    the XGBoost model's validation root mean squared error and R squared score decreased and increased to 25793 and 0.975 
                                     respectively. The fine-tuned XGBoost model was using a learning rate of 0.1 (default: 0.3), 
-                                    maximmum depth of 8 (default: 6) and 480 estimators (default: 100). </p>
+                                    maximmum depth of 10 (default: 6) and 470 estimators (default: 100). </p>
 
                                 <p>The fine-tuned random forest model's validation root mean squared error and R squared score decreased and increased 
-                                    to 26525 and 0.966 respectively. It uses a max depth of 20, and 205 estimators (default: 100)</p>
+                                    to 29324 and 0.967 respectively. It uses a max depth of 20, and 205 estimators (default: 100)</p>
                                 
                                 <p>The selected models are also evaluated on the test set to ensure that the model is able estimate accurate predictions on new unseen data</p>
 
@@ -428,13 +429,13 @@
                                     </tr>
                                     <tr>
                                         <td>Random Forest</td>
-                                        <td>25936.6</td>
+                                        <td>28928.9</td>
                                         <td>0.968</td>
                                     </tr>
                                     <tr>
                                         <td>Random Forest</td>
-                                        <td>24751.4</td>
-                                        <td>0.971</td>
+                                        <td>25151.6</td>
+                                        <td>0.976</td>
                                     </tr>
                                 </table>
 							</div>
@@ -449,7 +450,7 @@
                                 
                                 <a class="image"><img src="images/xgboost_plots.png" width="800" height="300"/></a>
 
-                                <p>Based on the summary plot for the XGBoost model, the top 5 features that have the highest SHAP values across all samples 
+                                <p>Based on the summary plot for the XGBoost model, the top 6 features that have the highest SHAP values across all samples 
                                     are "floor_area_sqm", "lease_age", "region_Central", "distance_to_nearest_MRT_stations" and "storey_range".</p>
 
                                 <table>
@@ -460,6 +461,11 @@
                                     <tr>
                                         <td>floor_area_sqm</td>
                                         <td>The larger the floor area of a flat, the greater its contribution in 
+                                            increasing its predicted resale price, and vice versa</td>
+                                    </tr>
+                                    <tr>
+                                        <td>year</td>
+                                        <td>The more recent the resale transaction, the greater its contribution in 
                                             increasing its predicted resale price, and vice versa</td>
                                     </tr>
                                     <tr>
