@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<!--
+	Read Only by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Angus Saw Projects Portfolio</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+		<section id="header">
+			<header>
+				<span class="image avatar"><img src="../../images/profile_pic.jpg" alt="" /></span>
+				<h4 id="home"><a href="../../index.html">Home</a></h4>
+
+			</header>
+			<nav id="nav">
+				<ul>
+					<li><a href="#introduction" class="active">Introduction</a></li>
+					<li><a href="#design_overview_features">Design Overview and Features</a></li>
+					<li><a href="#embeddings_vector_stores">Embeddings and Vector Stores</a></li>
+                    <li><a href="#retrieval_qa_chains">Retrieval QA Chains</a></li>
+					<li><a href="#conversational_agents">Conversational Agents</a></li>
+					<li><a href="#future_improvements">Future Improvements</a></li>
+
+				</ul>
+			</nav>
+            <footer>
+                <ul class="icons">
+                    <li><a href="https://www.linkedin.com/in/angussaw/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+                    <li><a href="mailto: angussaw39@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+                </ul>
+            </footer>
+		</section>
+
+		<div id="wrapper">
+
+			<!-- Main -->
+				<div id="main">
+
+					<!-- One -->
+						<section id="introduction">
+							<div class="image main" data-position="center">
+								<img src="images/large_number_of_documents.jpg" alt="" />
+							</div>
+							<div class="container">
+								<header class="major">
+									<h3>Conversing with multiple documents simultaneously via retrieval augmented generation and conversation agents </h3>
+									<p><u>Try it on <a href="https://angussaw-langchain-qa-app-test-main-gq5n1c.streamlit.app//">Streamlit</a>!</u></p>
+								</header>
+								<h4>Introduction</h4>
+                                
+
+								<p>The aim of this project is to build a chatbot application that leverages the reasoning and logic of a 
+                                    large language model to enable a user to converse with multiple documents at once. The model 
+                                    converses with the user and answer their queries with respect to the documents that contain 
+                                    the relevant information and context required. As such, users can accurately and efficiently query 
+                                    multiple documents containing relevant information without having to search for it.
+                                </p>
+
+                                <h5>Tools/concepts used</h5>
+                                <ul>
+									<li>Vector Stores (Chroma)</li>
+									<li>Text Embeddings</li>
+									<li>Hugging Face</li>
+									<li>LangChain (RetrievalQA chains + Conversation Agents)</li>
+                                    <li>Prompt Tuning</li>
+                                    <li>Streamlit</li>
+                                </ul>
+
+							</div>
+						</section>
+
+						<section id="design_overview_features">
+							<div class="container">
+								<h4>Design Overview and Features</h4>
+
+								<p>The multi document chatbot was designed with the following considerations and features:</p>
+                                <ol type="1">
+                                <li><strong>Flexibility to converse with own private documents:</strong>
+                                    Users using the chatbot will want to load and select which of their documents they would like to 
+                                    converse with. Having a feature that allows users to input new documents as well as the visibility
+                                    of the loaded documents will provide users the flexibility of using the application for their
+                                    own private documents.
+                                </li>
+
+                                <li><strong>Generate responses in context of the documents:</strong>
+                                    Within all the documents, the application will need to be able to find the answer or relevant context (if it exists)
+                                    and use it to generate a response to the user. Retrieval augmented generation will ensure that 
+                                    the application is not hallucinating and that the chatbot will provide accurate and 
+                                    relevant responses.
+                                </li>
+
+                                <li><strong>Dynamic searching of relevant document(s):</strong>
+                                    Based on whatever the user queries, the chatbot will need to able to automatically and 
+                                    correctly identify what action to take and/or which document to search the answer or context from. This allows the 
+                                    application to not just require a predetermined call to search within a specified document for the answer.
+                                </li>
+
+                                </ol>
+
+                                <p>With the considerations of features in mind, the following outlines the design of each component of the application:</p>
+
+                                <a class="image"><img src="images/qa_app_design_overview.png" width="825" height="450"/></a>
+
+                                <ol type="1">
+                                    <li>PDFs that are uploaded to the application will be split into smaller chunks called documents, 
+                                        and then passed through an <strong>embedding function</strong> to convert these documents into vector embeddings. 
+                                        These embeddings are saved in a vector store.
+                                        
+                                    </li>
+    
+                                    <li>Selected list of documents are then retrieved and are converted to database searches
+                                        that search for documents which are semantically relevant and similar to the user's query.
+                                        The database searches are then used to generate <strong>retrieval chains</strong>, 
+                                        which are a sequence of calls to perform question-answering over a given list of documents.
+                                        
+                                    </li>
+    
+                                    <li>Lastly, the chains are then used as tools to initialize a <strong>conversation agent</strong> which will help route 
+                                        the user's query to the correct list of documents to search the relevant context from to generate the response.
+                                    </li>
+    
+                                    </ol>
+
+                                    <p>The next few sections will cover each component in greater detail, as well as the technicalities 
+                                        behind the processes in setting up the chatbot application
+                                    </p>
+
+							</div>
+						</section>	
+
+                        <section id="embeddings_vector_stores">
+							<div class="container">
+								<h4>Embeddings and Vector Stores</h4>
+
+                                <p> When the user uploads a PDF file, a few steps are performed to process the file before it can be queried upon</p>
+
+                                <a class="image"><img src="images/streamlit_dashboard_1.png" width="800" height="400"/></a>
+
+                                <p>Using a set of specified parameters, the document is split by character into smaller chunks of text.
+                                    The <strong>"chunk size" and "chunk overlap"</strong> parameters can be adjusted to control the granularity of the chunks of text, 
+                                    as well as the context of information between the chunks.
+                                </p>
+
+                                <p>Each chunk of text is then passed through an <strong>embedding function</strong>. An embedding function helps to convert textual data into 
+                                    vectors (eg sentence embeddings) which can be used for a wide variety of tasks, including similarity search to find 
+                                    sematically similar sentences. The embedding function used here is the <strong>Sentence Transformers all-mpnet-base-v2 model</strong>, 
+                                    which maps sentences to a 768 dimensional vector space.
+                                </p>
+                                <a class="image"><img src="images/vector_embeddings_simplified.png" width="800" height="300"/></a>
+
+                                <p>The vector embeddings are then stored in a vector database using <strong>Chroma</strong>. Chroma is an open-source
+                                    embedding database which provides tools to store embeddings and their metadata, and most importantly indexes 
+                                    embeddings to allow for quick and efficient similarity search. 
+                                    For this application, the vector database is persisted locally. It has a table which displays all persisted
+                                    vector databases, showing the filename, collection name and description. This allows the user to keep track of which PDF 
+                                    files have already been uploaded to the application. 
+                                </p>
+                                <a class="image"><img src="images/chroma_db.png" width="750" height="200"/></a>
+
+
+                                <p>One thing to note is the <strong>name and description of the article</strong> when uploading the PDF file. The name should be a unique identifier
+                                    for each article, which also acts as a identifier for the vector database. The description must also be clear in 
+                                    describing what the article is about and what it is useful for, as it will be used later on by the conversational agent 
+                                    to determine which tool to use (which will be elaborated later on)
+                                </p>
+
+							</div>
+						</section>	
+
+
+                        <section id="retrieval_qa_chains">
+							<div class="container">
+								<h4>Retrieval QA Chains</h4>
+
+                                <p>When the user selects the file(s) to converse with, various configurations are made available to generate the 
+                                    conversation agent. As part of the process to generate the agent, there is a step which involves creating 
+                                    the <strong> retrieval QA chains</strong> which function as the agent's tools. 
+                                    
+                                    This section will cover the creation of these chains, while the later section covers the agent itself.
+                                </p>
+
+                                <p>Using LangChain, an open-source framework for developing applications powered by language models, retrieval QA chains 
+                                    are created using each list of documents (file). Each chain has a <strong>retriever</strong> which searches the 
+                                    vector database for the top most semantically similar chunk of text via <strong>cosine similarity</strong> with the question. 
+                                    Here is an example of returing the top 3 text chunks from the relevant list of documents based on the query provided:
+                                </p>
+                                <a class="image"><img src="images/similarity_search.png" width="700" height="250"/></a>
+
+                                <p>These text chunks are then used as context and inserted into a <strong>prompt template</strong> of the question-answering 
+                                    chain, along with the question itself. The template ensures that the language model generates a response by only 
+                                    using the provided context, also ensuring that the model does not hallucinate and provide helpful answers.
+                                </p>
+
+                                <a class="image"><img src="images/qa_template.png" width="650" height="200"/></a>
+
+
+                                <p>The prompt is then passed through the language model via a call to OpenAI's API to generate a response. 
+                                    The language model used here is <strong>gpt-3.5-turbo</strong>, which has a maximum token count of 4,096 tokens.
+                                    To use the API, an OpenAI API key is required, and the cost of the query is dependent on the number of tokens per query.
+                                    (Input: $0.0015 / 1K tokens, Output: $0.002 / 1K tokens)
+                                </p>
+
+                                <a class="image"><img src="images/retriever_qa_chain.png" width="750" height="200"/></a>
+
+                                <p>If more than one files are selected by the user to converse with, <strong>one retrieval QA chain is created for 
+                                    each file</strong>. Each chain has a retriever, a prompt template and a language model. 
+                                    Each will serve to retrieve the relevant chunks of text from their respective file to generate an accurate and 
+                                    corehent response.
+                                </p>
+                            </div>
+                        </section>
+
+                        <section id="conversational_agents">
+							<div class="container">
+								<h4>Conversational Agents</h4>
+
+                                <p>Once the retrieval QA chains are created, the conversation agent is then created.
+                                   In LangChain, <strong>an agent is a component that has access to a suite of tools, and based on the user's input 
+                                   can decide which tool to use.</strong> This enables the chatbot to be dynamic in using its ensemble of retrieval QA chains that 
+                                   it's provided with.
+                                </p>
+                                <a class="image"><img src="images/creating_agent.png" width="650" height="400"/></a>
+
+                                <p>The agent type used in this application is a <strong>CHAT_CONVERSATIONAL_REACT_DESCRIPTION</strong>. 
+                                   This agent type is used with a memory component in order to account for historical responses when chatting 
+                                   with the user and generating new responses. This optimizes the agent in a conversational setting with the user.</p>
+
+                                <p>An important characteristic of the agent is the <strong>ReAct framework</strong> that it uses to generate a response.
+                                   The ReAct framework is a prompting strategy that combines <strong>chain of thought reasoning with action planning</strong>. 
+                                   Through this iterative framework, in each step, the agent follows a sequence of events to obtain an intermediate observation.
+                                   This sequence of events is repeated until the final answer is generated from the language model and returned to the user.</p>
+
+                                <ol>
+                                <li><strong>Question:</strong> An example question that will require multiple steps to answser
+                                <li><strong>Thought:</strong> Reasoning step which identifies how to solve the problem and what actions to take (thought 1, action 1, observation 1) -> (thought 2, action 2, observation 2)
+                                <li><strong>Action:</strong> External task that the model can carry out from an allowed set of actions (tools such as retrieval QA chains)
+                                <li><strong>Observation:</strong> Result of carrying out the action
+                                </ol>
+
+                                <p>An example of the prompt template used by the agent is as follows. Take note of the <strong>tools</strong> available 
+                                    to the agent, and also the description of each tool which helps the agent to decide what action to take 
+                                    to obtain the final answer and respond to the user's query. This description was created during the loading 
+                                    of the PDF file into the application.
+                                </p>
+                                <a class="image"><img src="images/agent_prompt_template.png" width="750" height="600"/></a>
+
+                                <p>As an example, creating a conversation agent that has access to <strong>two retrieval QA chains as tools</strong>, the user is able to 
+                                    receive a relevant response that depends on multiple PDF files, due to the ReAct framework used by 
+                                    the agent and dynamically determining what action to take for each step in generating the final answer.
+                                </p>
+
+                                <a class="image"><img src="images/agent_chain_example.png" width="750" height="600"/></a>
+                                
+                            </div>
+                        </section>
+
+                        <section id="future_improvements">
+							<div class="container">
+								<h4>Future Improvements</h4>
+                                <ol>
+									<li>For the application to be fully productionized and to be able to accept large volumes of PDF files, 
+                                        the vector store can be run as a <strong>Chroma Server in a Docker container separately</strong>, 
+                                        creating a Client to connect to it, and then pass that to LangChain.
+                                    </li>
+									<li>Since the application leverages on OpenAI's gpt-3.5-turbo model, having a <strong>estimated cumulative cost 
+                                        calculator</strong> for each conversation session would provide the user visibility into how much cost 
+                                        is incurred.
+                                    </li>
+									<li>The application can be more specialized to query documents belonging to a specific domain or field 
+                                        (eg finance, career advisory, education etc). <strong>Adjusting the prompt template to make the responses 
+                                        more relevant to the domain or field</strong> would enhance the user experience and interactiveness.
+                                    </li>
+									<li>Besides retrieval QA chains, <strong>additional tools can be implemented</strong> when creating the conversation agent, 
+                                        such as a tool to search the web if necessary to generate responses that require information outside 
+                                        of the context of the PDF files.
+                                    </li>
+                                    <li>The chat history for each session can be exported to a csv file for future evaluation of the 
+                                        generated responses. On top of this, having a <strong>voting feature</strong> in the chat window will allow 
+                                        users to evaluate the responses in real time, and these voting results can be exported as well.
+                                        The various parameters can then be adjusted accordingly as desired.</li>
+                                </ol>
+                            </div>
+                        </section>
+                        <!-- <section id="footer">
+                            <div class="container">
+                                <ul class="copyright">
+                                    <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                                </ul>
+                            </div>
+                        </section> -->
+    
+                </div>
+    
+            <!-- Scripts -->
+                <script src="../../assets/js/jquery.min.js"></script>
+                <script src="../../assets/js/jquery.scrollex.min.js"></script>
+                <script src="../../assets/js/jquery.scrolly.min.js"></script>
+                <script src="../../assets/js/browser.min.js"></script>
+                <script src="../../assets/js/breakpoints.min.js"></script>
+                <script src="../../assets/js/util.js"></script>
+                <script src="../../assets/js/main.js"></script>
+    
+        </body>
+    </html>
